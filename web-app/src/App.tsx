@@ -1,17 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import './App.css';
 
-const WEBSOCKET_BACKEND_URL = "ws://localhost:8000/ws";
+const WEBSOCKET_PROTOCOL = window.location.protocol === "http" ? "ws" : "wss";
+const WEBSOCKET_URL_DEFAULT = "localhost:8000";
+const WEBSOCKET_URL_KEY = 'WebsocketUrl';
 
 function App() {
   const [stream, setStream] = useState<MediaStream | null>();
-  const [websocketUrl, setWebsocketUrl] = useState<string>(WEBSOCKET_BACKEND_URL);
+  const [websocketUrl, setWebsocketUrl] = useState<string>(localStorage.getItem(WEBSOCKET_URL_KEY) || WEBSOCKET_URL_DEFAULT);
   const [websocket, setWebsocket] = useState<WebSocket | null>(null);
   const [isStreaming, setIsStreaming] = useState<boolean>(false);
   const [latency, setLatence] = useState<number>(0);
+  const [error, setError] = useState<string>("");
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    localStorage.setItem(WEBSOCKET_URL_KEY, websocketUrl);
+  }, [websocketUrl]);
 
   useEffect(() => {
     if (!stream) return;
@@ -76,7 +83,7 @@ function App() {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       setStream(stream);
 
-      const websocket = new WebSocket(websocketUrl);
+      const websocket = new WebSocket(`${WEBSOCKET_PROTOCOL}://${websocketUrl}/ws`);
       websocket.onopen = () => setIsStreaming(true);
       websocket.onclose = () => {
         setIsStreaming(false);
@@ -85,7 +92,9 @@ function App() {
       setWebsocket(websocket);
     }
     catch (err) {
-      console.error(`An error occurred: ${err}`);
+      const error_text = `An error occurred: ${err}`;
+      setError(error_text);
+      console.error(error_text);
     }
   };
 
@@ -111,23 +120,32 @@ function App() {
 
   return (
     <div>
-      <input
-        type="text"
-        value={websocketUrl}
-        onChange={handleWebsocketUrlChange}
-        placeholder="Enter WebSocket URL"
-        style={{ width: "300px", marginRight: "10px" }}
-      />
-      {!stream ?
-        <button onClick={handleStart}>start</button>
-        :
-        <button onClick={handleStop}>stop</button>
-      }
-      <span>{websocket ? "+" : "-"}</span>
-      {isStreaming && <span>{latency}</span>}
+      <div>
+        <input
+          type="text"
+          value={websocketUrl}
+          onChange={handleWebsocketUrlChange}
+          placeholder="Enter WebSocket URL"
+          style={{ width: "300px", marginRight: "10px", fontSize: "16pt" }}
+        />
+        {!stream ?
+          <button onClick={handleStart}>start</button>
+          :
+          <button onClick={handleStop}>stop</button>
+        }
+      </div>
+      <div>
+        <span>{websocket ? "+" : "-"}</span>
+        {isStreaming && <span>{latency}</span>}
+      </div>
       <div>
         <video hidden={!stream} ref={videoRef} />
         <canvas hidden ref={canvasRef} />
+      </div>
+      <div>
+        <code>
+          {error}
+        </code>
       </div>
     </div>
   );
