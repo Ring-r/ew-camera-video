@@ -7,6 +7,11 @@ from starlette.websockets import WebSocketDisconnect
 app = FastAPI()
 
 
+@app.get("/ping")
+async def ping() -> str:
+    return "pong"
+
+
 @app.websocket("/ws")
 async def video_stream(websocket: WebSocket):
     await websocket.accept()

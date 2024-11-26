@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import './App.css';
 
-const WEBSOCKET_PROTOCOL = window.location.protocol === "http" ? "ws" : "wss";
+const WEBSOCKET_PROTOCOL = window.location.protocol === "http:" ? "ws" : "wss";
 const WEBSOCKET_URL_DEFAULT = "localhost:8000";
 const WEBSOCKET_URL_KEY = 'WebsocketUrl';
 
