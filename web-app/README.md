@@ -13,5 +13,5 @@ npm start
 for https and wss publish to GitHub pages, for example, and call `/ping` endpoint to make access by using self-signed SSL certificate.
 
 ## links
-- [..](../README.md)
-- [web-api](./web-api/README.md)
+- [base](../README.md)
+- [web-api](../web-api/README.md)

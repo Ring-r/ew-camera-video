@@ -21,5 +21,5 @@ docker compose up
 ```
 
 ## links
-- [..](../README.md)
-- [web-app](./web-app/README.md)
+- [base](../README.md)
+- [web-app](../web-app/README.md)
