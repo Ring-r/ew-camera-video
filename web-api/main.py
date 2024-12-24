@@ -1,3 +1,5 @@
+# pip install fastapi[standard] numpy opencv-python
+
 import cv2
 import numpy as np
 from fastapi import FastAPI
@@ -19,11 +21,11 @@ async def video_stream(websocket: WebSocket):
         try:
             while True:
                 data = await websocket.receive_bytes()
-                # Convert bytes to a NumPy array
+                # convert bytes to a NumPy array
                 np_array = np.frombuffer(data, dtype=np.uint8)
-                # Decode as an image
+                # decode as an image
                 frame = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
-                # Process frame here (e.g., save, analyze, etc.)
+                # process frame here (e.g., save, analyze, etc.)
                 cv2.imshow("Video Stream", frame)
                 if cv2.waitKey(1) & 0xFF == ord("q"):
                     break

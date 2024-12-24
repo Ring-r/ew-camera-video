@@ -1,2 +1,6 @@
 # ew-camera-video
-Experiments with Video from Camera.
+
+experiments with video from camera.
+
+- [web-api](./web-api/README.md)
+- [web-app](./web-app/README.md)
